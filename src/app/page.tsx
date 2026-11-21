@@ -192,12 +192,6 @@ export default function Home() {
       {/* Interactive Top-Shot Water + Koi Background */}
       <PondWater />
 
-      {/* Minimal Thin Frosted Glass Pane over the entire pond so water & koi feel right behind the glass */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-[5] bg-white/[0.10] bg-gradient-to-br from-white/[0.18] via-white/[0.04] to-white/[0.12] backdrop-blur-[2.5px] shadow-[inset_0_1px_1px_rgba(255,255,255,0.75)]"
-      />
-
       {/* UI Overlay Layer */}
       <div className="relative z-10 flex flex-col justify-between w-full h-full pointer-events-none">
         {/* 1. Free-floating Minimal Navbar (compact on mobile, untouched on desktop) */}
