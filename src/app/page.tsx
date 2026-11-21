@@ -268,8 +268,8 @@ export default function Home() {
               </span>
             </div>
 
-            {/* Outer Crystal-Clear Glass Tray */}
-            <div className="relative rounded-[15px] sm:rounded-[18px] p-1 sm:p-1.5 pb-1.5 sm:pb-2 bg-neutral-900/[0.03] backdrop-blur-[8px] border border-neutral-900/[0.08] shadow-[0_6px_24px_-6px_rgba(15,23,42,0.06),inset_0_1px_0_rgba(255,255,255,0.7)]">
+            {/* Outer Wrapper (no outer border or shadow) */}
+            <div className="relative">
               {/* Inner Frosted Glass Prompt Card */}
               <div className="rounded-[12px] sm:rounded-[14px] bg-white/45 backdrop-blur-[12px] border border-neutral-900/[0.09] shadow-[0_2px_10px_-2px_rgba(15,23,42,0.05),inset_0_1px_0_rgba(255,255,255,0.9)] px-2.5 pt-1.5 pb-1.5 sm:px-3 sm:pt-2 sm:pb-2">
                 {/* Top Controls Toolbar */}
