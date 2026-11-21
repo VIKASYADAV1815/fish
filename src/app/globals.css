@@ -19,3 +19,12 @@ body {
 .pond-shadow-nav-btn {
   box-shadow: calc(5px + var(--sx, 0px)) calc(9px + var(--sy, 0px)) 12px -1px rgba(15, 23, 42, 0.18);
 }
+
+/* Hide scrollbar for single-line quick-action pills on small devices */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

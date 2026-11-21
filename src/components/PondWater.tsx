@@ -439,9 +439,10 @@ export default function PondWater() {
       for (const c of clicks.current) school.attract((c.x * 2 - 1) * aspect, c.y * 2 - 1);
       clicks.current.length = 0;
 
-      // koi: swim lazily, gently come closer to the hovered cursor
+      // koi: roam slowly across the whole pond when idle; follow cursor fast while cursor is actively moving
+      const isCursorActive = p.active && now - p.lastMove < 1700;
       school.update(dt, {
-        active: p.active,
+        active: isCursorActive,
         x: (p.x * 2 - 1) * aspect,
         y: p.y * 2 - 1,
       });

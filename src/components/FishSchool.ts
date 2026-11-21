@@ -21,10 +21,10 @@ const FISH_LENGTH = 0.40; // on-screen koi length (world units, screen height = 
 const SEP_RADIUS = 0.54; // comfortable personal space between fish
 
 // movement (world units / second)
-const CRUISE_MIN = 0.09; // calm roaming speed when idle
-const CRUISE_MAX = 0.12;
-const FOLLOW_SPEED = 0.56; // energetic, responsive swimming toward the moving cursor
-const ORBIT_SPEED = 0.22; // lively cruising speed near the cursor
+const CRUISE_MIN = 0.052; // slow, peaceful roaming speed initially & when cursor is idle
+const CRUISE_MAX = 0.072;
+const FOLLOW_SPEED = 0.58; // fast, energetic swimming when cursor is moving
+const ORBIT_SPEED = 0.22; // lively cruising speed near the moving cursor
 const MAX_CURVATURE = 5.4; // rad per world unit (agile, responsive koi turns)
 
 type SpineUniforms = {
@@ -230,14 +230,20 @@ export default class FishSchool {
 
   private pickWaypoint(i: number): { x: number; y: number } {
     const rScale = this.getResponsiveScale();
-    const mx = Math.max(0.2, this.aspect - 0.28 * rScale);
-    const my = 0.68;
-    const angle = Math.random() * Math.PI * 2;
-    const rx = (0.35 + Math.random() * 0.65) * mx;
-    const ry = (0.35 + Math.random() * 0.65) * my;
+    const mx = Math.max(0.22, this.aspect - 0.22 * rScale);
+    // Distribute waypoints across the full vertical height, with emphasis on the top & middle pond
+    // so fish regularly swim up to the top area on mobile and desktop.
+    const yBands: [number, number][] = [
+      [0.35, 0.84],  // top pond (near navbar / above heading)
+      [0.15, 0.72],  // upper-mid pond
+      [-0.20, 0.55], // center pond
+      [0.25, 0.82],  // top pond
+      [-0.52, 0.30], // lower-mid pond
+    ];
+    const [yLo, yHi] = yBands[i % yBands.length];
     return {
-      x: Math.cos(angle + i * 1.2) * rx,
-      y: Math.sin(angle + i * 1.2) * ry,
+      x: (Math.random() * 2 - 1) * mx,
+      y: yLo + Math.random() * (yHi - yLo),
     };
   }
 
@@ -250,7 +256,8 @@ export default class FishSchool {
         bakeSymmetricStraightPose(gltf.scene);
 
         const radii = [0.24, 0.33, 0.28, 0.37, 0.30];
-        const ys = [0.42, -0.44, 0.14, -0.22, 0.54];
+        // Spread initial fish from the upper pond (+0.76) through the center (-0.28)
+        const ys = [0.72, 0.38, 0.06, -0.26, 0.56];
 
         for (let i = 0; i < FISH_COUNT; i++) {
           const inner = gltf.scene.clone(true);
@@ -365,8 +372,8 @@ export default class FishSchool {
     const aspect = this.aspect;
 
     const rScale = this.getResponsiveScale();
-    const maxX = Math.max(0.18, aspect - 0.20 * rScale);
-    const maxY = 0.80;
+    const maxX = Math.max(0.2, aspect - 0.18 * rScale);
+    const maxY = 0.88;
     const effSepRadius = SEP_RADIUS * rScale;
 
     for (let i = 0; i < this.fishes.length; i++) {
@@ -514,9 +521,9 @@ export default class FishSchool {
 
       // ---- 6) compute rendered spine joints (backbone trail + speed-matched sinusoidal tail wave) ----
       const speedNorm = clamp((f.speed - CRUISE_MIN) / (FOLLOW_SPEED - CRUISE_MIN), 0, 1);
-      const wagFreq = 2.4 + f.speed * 19.0;
+      const wagFreq = 1.35 + f.speed * 19.5;
       f.swim += dt * wagFreq;
-      const wagWorldAmp = (0.016 + speedNorm * 0.022) * (f.scale / (FISH_LENGTH / MODEL_LENGTH));
+      const wagWorldAmp = (0.012 + speedNorm * 0.025) * (f.scale / (FISH_LENGTH / MODEL_LENGTH));
 
       for (let k = 0; k < SPINE_JOINTS; k++) {
         const prev = f.trail[Math.max(0, k - 1)];

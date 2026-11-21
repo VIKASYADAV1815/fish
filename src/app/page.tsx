@@ -328,16 +328,16 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Bottom Quick-Action Suggestion Pills Row */}
-              <div className="mt-1 sm:mt-1.5 flex flex-wrap items-center justify-center gap-1 px-0.5 sm:px-1">
+              {/* Bottom Quick-Action Suggestion Pills Row — strictly single line on all devices */}
+              <div className="mt-1 sm:mt-1.5 flex flex-nowrap items-center justify-between sm:justify-center gap-1 w-full overflow-x-auto no-scrollbar px-0.5 sm:px-1">
                 {QUICK_ACTIONS.map(({ label, icon: Icon, prompt: samplePrompt }) => (
                   <button
                     key={label}
                     type="button"
                     onClick={() => setPrompt(samplePrompt)}
-                    className="inline-flex items-center gap-1 px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-[6px] sm:rounded-[7px] bg-white/55 hover:bg-white/85 backdrop-blur-sm border border-neutral-900/[0.08] shadow-[0_1px_2px_rgba(15,23,42,0.03)] text-[9.5px] sm:text-[10.5px] font-normal tracking-[-0.01em] text-neutral-700 hover:text-neutral-950 whitespace-nowrap transition-all"
+                    className="inline-flex items-center justify-center gap-0.5 sm:gap-1 px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-[6px] sm:rounded-[7px] bg-white/55 hover:bg-white/85 backdrop-blur-sm border border-neutral-900/[0.08] shadow-[0_1px_2px_rgba(15,23,42,0.03)] text-[8.5px] sm:text-[10.5px] font-normal tracking-[-0.015em] sm:tracking-[-0.01em] text-neutral-700 hover:text-neutral-950 whitespace-nowrap shrink-0 transition-all"
                   >
-                    <Icon className="w-2.5 h-2.5 text-neutral-500 stroke-[1.8]" />
+                    <Icon className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-neutral-500 stroke-[1.8] shrink-0" />
                     <span>{label}</span>
                   </button>
                 ))}
