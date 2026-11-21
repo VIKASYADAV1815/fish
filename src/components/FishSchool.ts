@@ -21,8 +21,10 @@ const FISH_LENGTH = 0.40; // on-screen koi length (world units, screen height = 
 const SEP_RADIUS = 0.54; // comfortable personal space between fish
 
 // movement (world units / second)
-const CRUISE_MIN = 0.052; // slow, peaceful roaming speed initially & when cursor is idle
-const CRUISE_MAX = 0.072;
+// Initial/idle roaming uses a natural "slow-fast combo" (burst-and-glide koi rhythm):
+// each fish alternates smoothly between a calm drift (CRUISE_SLOW) and a lively stroke glide (CRUISE_BURST).
+const CRUISE_SLOW = 0.095; // calm coasting phase (not too slow)
+const CRUISE_BURST = 0.235; // lively stroke-and-glide phase during normal roaming
 const FOLLOW_SPEED = 0.58; // fast, energetic swimming when cursor is moving
 const ORBIT_SPEED = 0.22; // lively cruising speed near the moving cursor
 const MAX_CURVATURE = 5.4; // rad per world unit (agile, responsive koi turns)
@@ -303,7 +305,7 @@ export default class FishSchool {
 
           const slot = (i + 0.5) / FISH_COUNT;
           const theta = (i / FISH_COUNT) * Math.PI * 2 + 0.35;
-          const cruise = CRUISE_MIN + (i / FISH_COUNT) * (CRUISE_MAX - CRUISE_MIN);
+          const cruise = CRUISE_SLOW + ((i % 3) / 2) * 0.03;
           const headX = (slot * 2 - 1) * this.aspect * 0.65;
           const headY = ys[i % ys.length];
 
@@ -490,14 +492,15 @@ export default class FishSchool {
       const targetCurvature = clamp(angleError * 4.2, -MAX_CURVATURE, MAX_CURVATURE);
       f.curvature += (targetCurvature - f.curvature) * (1 - Math.exp(-dt * 10.0));
 
-      // ---- 4) speed with responsive burst toward the moving cursor ----
+      // ---- 4) natural "slow-fast combo" (burst & coast when idle) + fast burst on cursor move ----
+      const rhythmWave = 0.5 + 0.5 * Math.sin(t * 1.25 + i * 1.65);
+      const burstPulse = Math.pow(rhythmWave, 1.45); // smooth surge peak + smooth coast valley
+      const idleComboSpeed = f.cruise + (CRUISE_BURST - CRUISE_SLOW) * burstPulse;
+
       const farFactor = smoothstep(0.05, 0.48, distGoal);
       const activeSpeed = ORBIT_SPEED + (FOLLOW_SPEED - ORBIT_SPEED) * farFactor;
-      const baseTargetSpeed = (f.cruise + (activeSpeed - f.cruise) * interest) * speedEase;
-
-      const strokePulse = 1 + 0.06 * Math.sin(f.swim * 2.0);
-      const desiredSpeed = baseTargetSpeed * strokePulse;
-      const accelRate = desiredSpeed > f.speed ? 7.5 : 3.5;
+      const desiredSpeed = (idleComboSpeed * (1 - interest) + activeSpeed * interest) * speedEase;
+      const accelRate = desiredSpeed > f.speed ? 6.5 : 3.2;
       f.speed += (desiredSpeed - f.speed) * (1 - Math.exp(-dt * accelRate));
 
       const stepDist = f.speed * dt;
@@ -520,10 +523,10 @@ export default class FishSchool {
       }
 
       // ---- 6) compute rendered spine joints (backbone trail + speed-matched sinusoidal tail wave) ----
-      const speedNorm = clamp((f.speed - CRUISE_MIN) / (FOLLOW_SPEED - CRUISE_MIN), 0, 1);
-      const wagFreq = 1.35 + f.speed * 19.5;
+      const speedNorm = clamp((f.speed - CRUISE_SLOW) / (FOLLOW_SPEED - CRUISE_SLOW), 0, 1);
+      const wagFreq = 1.6 + f.speed * 19.5;
       f.swim += dt * wagFreq;
-      const wagWorldAmp = (0.012 + speedNorm * 0.025) * (f.scale / (FISH_LENGTH / MODEL_LENGTH));
+      const wagWorldAmp = (0.014 + speedNorm * 0.024) * (f.scale / (FISH_LENGTH / MODEL_LENGTH));
 
       for (let k = 0; k < SPINE_JOINTS; k++) {
         const prev = f.trail[Math.max(0, k - 1)];
