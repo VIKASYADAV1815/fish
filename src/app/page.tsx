@@ -239,8 +239,8 @@ export default function Home() {
         </header>
 
         {/* 2. Light 300-Weight Minimal Hero Heading & Subheading (compact on mobile, untouched on desktop) */}
-        <div className="px-4 sm:px-6 flex flex-col items-center text-center -mt-2 sm:-mt-4">
-          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/45 text-[9.5px] sm:text-[10.5px] font-normal tracking-[0.08em] uppercase text-neutral-600 mb-2.5 sm:mb-4">
+        <div className="px-4 sm:px-6 flex flex-col items-center text-center -mt-4 sm:-mt-7">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/45 text-[9.5px] sm:text-[10.5px] font-normal tracking-[0.08em] uppercase text-neutral-600 mb-6 sm:mb-8">
             <span className="w-1.5 h-1.5 rounded-full bg-neutral-800" />
             <span>Quiet Intelligence for Creators</span>
           </div>
